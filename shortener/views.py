@@ -40,4 +40,12 @@ class UpdateShortURL(APIView):
             return Response(URLShortenerSerializer(updated_instance).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class DeleteShortURL(APIView):
+    """API to delete a short URL."""
+    def delete(self, request, short_code):
+        url_entry = get_object_or_404(ShortenedURL, short_code=short_code)
+        url_entry.short_code = ""
+        url_entry.save(update_fields=['short_code'])
+        return Response({"message": "Short code removed, but original URL is kept."}, status=status.HTTP_200_OK)
+
         
