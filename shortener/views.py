@@ -47,5 +47,12 @@ class DeleteShortURL(APIView):
         url_entry.short_code = ""
         url_entry.save(update_fields=['short_code'])
         return Response({"message": "Short code removed, but original URL is kept."}, status=status.HTTP_200_OK)
+    
+
+class URLStatistics(APIView):
+    """API to get URL statistics."""
+    def get(self, request, short_code):
+        url_entry = get_object_or_404(ShortenedURL, short_code=short_code)
+        return Response(URLShortenerSerializer(url_entry).data)
 
         
