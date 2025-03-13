@@ -25,5 +25,19 @@ class RetrieveOriginalURL(APIView):
         data = URLShortenerSerializer(url_entry).data
         data.pop("access_count",None)
         return Response(data)
+    
+class UpdateShortURL(APIView):
+    """API to update an existing short URL."""
+    def put(self, request, short_code):
+        url_entry = get_object_or_404(ShortenedURL, short_code=short_code)
+        print(request.data)
+        serializer = URLShortenerSerializer(url_entry, data=request.data, partial=True)
+        if serializer.is_valid():
+            url_entry.save()  
+
+            updated_instance =serializer.save()
+            print("Updated URL:", updated_instance.original_url)
+            return Response(URLShortenerSerializer(updated_instance).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         
